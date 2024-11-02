@@ -1,0 +1,11 @@
+name: trendradar
+
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=trendradar_database'
+      - 'POSTGRES_PASSWORD=trendradar_password'
+      - 'POSTGRES_USER=trendradar_user'
+    ports:
+      - '5432:5432'
