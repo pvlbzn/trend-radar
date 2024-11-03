@@ -1,5 +1,6 @@
 package dev.trendradar.app.cmd;
 
+import dev.trendradar.app.languages.LanguageDTO;
 import dev.trendradar.app.languages.LanguageService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +68,7 @@ public class DataUploadCommand implements CommandLineRunner {
     }
 
     private void exec() {
-        log.info("uploading data");
+        log.info("Uploading data.");
 
         long t1 = System.nanoTime();
         var itemsProcessed = forCsv("data/languages.csv", this::uploadToDatabase);
@@ -85,16 +86,23 @@ public class DataUploadCommand implements CommandLineRunner {
 
             var csv = reader.lines()
                     // Skip the header line
-                    .skip(1).map(LanguageDataEntry::serializeFrom).filter(Optional::isPresent).map(Optional::get).toList();
+                    .skip(1)
+                    .map(LanguageDataEntry::serializeFrom)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList();
 
             // Don't forget to free the resources.
             stream.close();
 
             var counter = new AtomicInteger();
-            csv.forEach(row -> {
-                fn.accept(row);
-                counter.getAndIncrement();
-            });
+            csv
+                    .stream()
+                    .parallel()
+                    .forEach(row -> {
+                        fn.accept(row);
+                        counter.getAndIncrement();
+                    });
 
             return counter.get();
         } catch (IOException | SecurityException | InvalidPathException e) {
@@ -102,11 +110,13 @@ public class DataUploadCommand implements CommandLineRunner {
             log.error(e);
             System.exit(1);
 
-            return 0;
+            return -1;
         }
     }
 
     private void uploadToDatabase(LanguageDataEntry entry) {
-        languageService.add(entry.pushers, entry.language, entry.type, entry.region, entry.year, entry.quarter);
+        var data = new LanguageDTO.Language(
+                entry.pushers, entry.language, entry.type, entry.region, entry.year, entry.quarter);
+        languageService.add(data);
     }
 }
