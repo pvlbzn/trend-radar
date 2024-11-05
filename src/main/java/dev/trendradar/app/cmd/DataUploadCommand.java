@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.InvalidPathException;
+import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -27,7 +28,7 @@ public class DataUploadCommand implements CommandLineRunner {
         this.languageService = languageService;
     }
 
-    record LanguageDataEntry(int pushers, String language, String type, String region, int year, int quarter) {
+    record LanguageDataEntry(int pushers, String language, String type, String region, int year, int quarter, Date createdAt, Date updatedAt) {
         /**
          * Serialize from CSV line into {@code LanguageDataEntry} record.
          * <p>
@@ -53,7 +54,15 @@ public class DataUploadCommand implements CommandLineRunner {
             }
 
             try {
-                return Optional.of(new LanguageDataEntry(Integer.parseInt(items[0]), items[1], items[2], items[3], Integer.parseInt(items[4]), Integer.parseInt(items[5])));
+                return Optional.of(new LanguageDataEntry(
+                        Integer.parseInt(items[0]),
+                        items[1],
+                        items[2],
+                        items[3],
+                        Integer.parseInt(items[4]),
+                        Integer.parseInt(items[5]),
+                        new Date(),
+                        new Date()));
             } catch (NumberFormatException e) {
                 return Optional.empty();
             }
@@ -115,8 +124,11 @@ public class DataUploadCommand implements CommandLineRunner {
     }
 
     private void uploadToDatabase(LanguageDataEntry entry) {
-        var data = new LanguageDTO.Language(
-                entry.pushers, entry.language, entry.type, entry.region, entry.year, entry.quarter);
-        languageService.add(data);
+        languageService.add(entry.pushers,
+                entry.language,
+                entry.type,
+                entry.region,
+                entry.year,
+                entry.quarter);
     }
 }
