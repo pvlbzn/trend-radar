@@ -1,10 +1,10 @@
-HELP.md
+### Java specific files ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 .mvn
-.DS_Store
+
 
 ### STS ###
 .apt_generated
@@ -15,11 +15,47 @@ target/
 .springBeans
 .sts4-cache
 
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+
+
+### Frontend ###
+# dependencies
+ui/node_modules
+ui/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+# testing
+ui/coverage
+# next.js
+ui/.next/
+ui/out/
+# production
+ui/build
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# env files (can opt-in for commiting if needed)
+.env*
+# vercel
+.vercel
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+
+### MacOS & misc ###
+.DS_Store
+*.pem
 
 
 # Ignore data in resources
