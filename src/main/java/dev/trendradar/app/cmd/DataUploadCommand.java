@@ -1,6 +1,5 @@
 package dev.trendradar.app.cmd;
 
-import dev.trendradar.app.languages.LanguageDTO;
 import dev.trendradar.app.languages.LanguageService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +48,6 @@ public class DataUploadCommand implements CommandLineRunner {
             // Expected item count is 6, if some data point is not valid return empty
             // optional for it.
             if (items.length != 6) {
-
                 return Optional.empty();
             }
 

@@ -4,11 +4,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 @Table("languages")
-record Language(
+public record Language(
         @Id UUID id,
         int contributors,
         String language,
@@ -16,7 +16,7 @@ record Language(
         String region,
         int year,
         int quarter,
-        @Column("created_at") Date createdAt,
-        @Column("updated_at") Date updatedAt
+        @Column("created_at") Instant createdAt,
+        @Column("updated_at") Instant updatedAt
 ) {
 }

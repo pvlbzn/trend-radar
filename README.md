@@ -1,4 +1,17 @@
-# Trend Radar API
+# Fast Innovation Graph API
+
+[Innovation Graph](https://github.com/github/innovationgraph) is a unique project of GitHub to share their data. Data is available in [CSV](https://github.com/github/innovationgraph/tree/main/data) and on [Innovation Graph website](https://innovationgraph.github.com/economies/us). While data is amazing, working with it at original website is painfully slow, and they don't provide API. This project fixes both issues.
+
+For most requests performance went up from seconds down to:
+* Sub 50ms for uncached requests
+* Sub 5ms for cached requests
+
+For all-data-at-once performance is at 100ms, effectively download of ~11MB JSON.
+
+More on performance at **Performance** section.
+
+
+## Languages API
 
 Data is being served by the main API endpoint
 
@@ -18,7 +31,7 @@ Which supports following query string parameters in **any order and in any combi
 API supports search by any combination of those 5 parameters, supporting $2^5$ unique queries. To get all the data at
 once leave query string empty.
 
-## Examples
+### Examples
 
 For example lets fetch trend of Haskell language in Canada during 3rd quarter of 2021. Here is our query which satisfies
 the search. Order of parameters doesn't matter.
@@ -119,7 +132,16 @@ allowing typical **request to be served under 10ms** after caching.
 Caching allows to have fast response times ensuring the best user experience on client side while avoiding non-necessary
 connections to the database, at the expense of runtime memory.
 
+## Indices
+
+Generally such a data won't benefit, greatly, from indexing. Schema has compound index and index over languages. 
+
+Data of low cardinality, meaning that the potential set of values is bound to a limited known-before-hand set of values. For example there are very low cardinality fields such as `year` or `quarter` -- data spans over 4 years, and a year has 4 quarters, therefore both columns can have only 4 distinct values. For such a low count of distinct values PostgreSQL will opt in for a sequential search. Even `language` column has cardinality of only 384 distinct values, binary search practically won't make much difference given expense of memory and storage space for the index itself.
+
+
 # Commands
+
+To run application locally first you need to run docker-compose file, then upload data, then run Spring Boot app.
 
 ## Upload data
 

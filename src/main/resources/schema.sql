@@ -11,3 +11,15 @@ create table if not exists languages(
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
+
+-- Indices for language column for individual queries such as data about Nim
+create index if not exists idx_languages_language on languages(language);
+
+-- Compound index, high cardinality fields first
+create index if not exists idx_languages_compound on languages(
+       language,
+       language_type,
+       region,
+       year,
+       quarter
+);

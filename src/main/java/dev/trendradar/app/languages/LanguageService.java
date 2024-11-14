@@ -6,7 +6,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -25,6 +25,8 @@ public class LanguageService {
     }
 
     public void add(int contributors, String language, String type, String region, int year, int quarter) {
+        var now = Instant.now();
+
         languageRepository.save(new Language(
                 null,
                 contributors,
@@ -33,8 +35,8 @@ public class LanguageService {
                 region,
                 year,
                 quarter,
-                new Date(),
-                new Date()));
+                now,
+                now));
     }
 
     private String generateFilterFingerprint(List<Boolean> fingerprint, List<String> parameters) throws IllegalArgumentException {
@@ -80,9 +82,6 @@ public class LanguageService {
                 !type.isEmpty());
         // Generate query for the fingerprint. That is, `1 0 1 0 0` becomes `language:year` query.
         var query = generateFilterFingerprint(fingerprint, parameters);
-
-        log.debug("fingerprint: {}", fingerprint);
-        log.debug("query: {}", query);
 
         var nYear = year.isEmpty() ? 0 : Integer.parseInt(year);
         var nQuarter = quarter.isEmpty() ? 0 : Integer.parseInt(quarter);
